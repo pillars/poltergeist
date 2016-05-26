@@ -9,7 +9,6 @@ var rev            = require('gulp-rev')
 var sass           = require('gulp-sass')
 var clean          = require('gulp-clean')
 var concat         = require('gulp-concat')
-var rename         = require('gulp-rename')
 var replace        = require('gulp-replace-task')
 var collect        = require('gulp-rev-collector')
 var imagemin       = require('gulp-imagemin')
@@ -23,9 +22,7 @@ var autoprefixer   = require('gulp-autoprefixer')
 var nunjucksRender = require('gulp-nunjucks-render')
 
 // Configuration
-var rootPath  =  './'
 var buildPath  =  'build'
-var buildPathAbsolute = '/' + buildPath
 var srcPath = 'src'
 var assetsPath = srcPath + '/assets'
 
@@ -39,7 +36,7 @@ gulp.task(
     'html:compile',
     'serve'
   ],
-  function() {
+  function () {
     gulp.watch(assetsPath + '/css/**/*.scss', ['styles:compile'])
     gulp.watch(assetsPath + '/js/**/*.js',    ['scripts:compile'])
     gulp.watch(assetsPath + '/fonts/**/*',    ['fonts:compile'])
