@@ -2,9 +2,7 @@
 
 <html lang="fr">
 <head>
-    <title>
-      {% block title %} {% endblock %}
-    </title>
+    <title>{{title}}</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width">
@@ -14,6 +12,7 @@
 
 <body>
   {% block content %} {% endblock %}
+  {{contents}}
 </body>
 
 </html>

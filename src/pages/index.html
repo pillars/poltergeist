@@ -1,0 +1,31 @@
+---
+title: My Site
+---
+
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="container">
+    {% for post in posts %}
+    <div class="post">
+      <h2 class="post-title">
+        <a href="{{post.url}}">
+          {{post.title}}
+        </a>
+      </h2>
+      <p class="post-excerpt">
+        {{post.excerpt}}
+      </p>
+      <p class="post-meta">
+        {{post.date}}
+        {% if post.tags.length %}
+           -
+          {% for tag in post.tags %}
+            {{tag}},
+          {% endfor %}
+        {% endif %}
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}

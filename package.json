@@ -1,6 +1,6 @@
 {
   "name": "poltergeist",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "dependencies": {},
   "devDependencies": {
     "dotenv": "^2.0.0",
@@ -10,10 +10,11 @@
     "gulp-clean": "^0.3.1",
     "gulp-cloudfront-invalidate-aws-publish": "0.0.1",
     "gulp-concat": "^2.6.0",
+    "gulp-front-matter": "^1.3.0",
     "gulp-htmlmin": "^2.0.0",
     "gulp-imagemin": "^2.3.0",
     "gulp-minify-css": "^1.2.0",
-    "gulp-nunjucks-render": "^2.0.0",
+    "gulp-rename": "^1.2.2",
     "gulp-replace-task": "^0.2.3",
     "gulp-rev": "^5.1.0",
     "gulp-rev-collector": "^1.0.0",
@@ -22,7 +23,12 @@
     "gulp-util": "^3.0.6",
     "gulp-webserver": "^0.9.1",
     "imagemin-pngquant": "^4.1.2",
+    "marked": "^0.3.5",
+    "nunjucks": "^2.4.2",
+    "nunjucks-markdown": "^2.0.0",
+    "object-assign": "^4.1.0",
     "path": "^0.11.14",
-    "run-sequence": "^1.1.5"
+    "run-sequence": "^1.1.5",
+    "through2": "^2.0.1"
   }
 }
