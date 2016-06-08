@@ -9,6 +9,7 @@ Welcome to Poltergeist, yet another static site generator based on Gulp. Here is
 - Supports advanced layouts and templates
 - Supports SASS
 - Concatenates, minifies, versions and gzip assets (images, fonts, css and js)
+- Generates a RSS feed
 - One command to develop for with `gulp`
 - One command deploy to S3 with `gulp deploy`
 - Supports Cloudfront distributions and manage cache invalidation
@@ -37,6 +38,14 @@ cp .env.example .env
 ```
 
 We remove the `.git` folder because there is no benefit in keeping ties with this repository. You can instantiate a new repository for your project with `git init`.
+
+You can skip setting the values in the `.env` file for now but you will need them for deploying. You will want to edit the `src/site.json` file though to enter your site information:
+
+- **title**: The default title for the site (can be overridden for each page)
+- **url**: The site url
+- **author**: Who are you?
+- **email**: Where can we reach you?
+- **feed**: How do you want to name your RSS feed? Leave blank to disable the RSS feed.
 
 To start the development server, simply run `gulp`. It also watches for changes, recompiling the assets and templates. By default, the site will run at `localhost:8000`.
 
@@ -123,7 +132,7 @@ There is no constraint of format here. You can use the same strategy as posts by
 
 ### Deploy to S3 and Cloudfront
 
-Poltergeist will upload your site to the specified bucket on S3 and if you have a Cloudfront distribution, it will make sure to invalidate what needs to be. But first you want to configure your credentials in the `.env`:
+Poltergeist will upload your site to the specified bucket on S3 and if you have a CloudFront distribution, it will make sure to invalidate what needs to be. But first you want to configure your credentials in the `.env`:
 
 - PRODUCTION_ASSET_URL: The cloudfront or S3 domain name where the site is hosted. Something like `abcdefg123456.cloudfront.net`
 - S3_BUCKET: The S3 bucket where the site is hosted. I usually use the domain name like `yoursite.com`
@@ -145,7 +154,6 @@ This project is inspired by the work of ![Sean Farrell](http://www.rioki.org/201
 ## Todo
 
 - Sitemap.xml
-- RSS feed
 - Social sharing
 - Tags
 - Months pages

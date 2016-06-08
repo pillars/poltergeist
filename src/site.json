@@ -2,5 +2,6 @@
   "title": "My site",
   "url": "https://mysite.com",
   "author": "You",
-  "email": "you@mysite.com"
+  "email": "you@mysite.com",
+  "feed": "My feed"
 }

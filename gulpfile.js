@@ -21,6 +21,7 @@ var marked           = require('marked')
 var minifyCss        = require('gulp-minify-css')
 var nunjucks         = require('nunjucks')
 var nunjucksMarkdown = require('nunjucks-markdown')
+var nunjucksDate     = require('nunjucks-date-filter')
 var pngquant         = require('imagemin-pngquant')
 var rename           = require('gulp-rename')
 var replace          = require('gulp-replace-task')
@@ -62,6 +63,7 @@ var nunjucksEnv = new nunjucks.Environment(nunjucksLoader, {
 })
 
 nunjucksMarkdown.register(nunjucksEnv, marked)
+nunjucksEnv.addFilter('date', nunjucksDate)
 
 var dateRegex = /(\d{4})-(\d{1,2})-(\d{1,2})-(.*)/
 
@@ -122,7 +124,7 @@ function nunjucksRender(file, contents, context, cb) {
   }
   nunjucksEnv.renderString(contents, context, function (err, res) {
     if (err) {
-      return cb(new PluginError('nunjucksRender', err, {showStack: true}))
+      return cb(new gutil.PluginError('nunjucksRender', err, {showStack: true}))
     }
     file.contents = new Buffer(res)
     file.path = file.path.replace(/\.md$/, '.html')
@@ -141,7 +143,7 @@ function renderHTML() {
         context.layout = context.layout || 'layout.html'
         marked(file.contents.toString('utf8'), function (err, contents) {
           if (err) {
-            return cb(new PluginError('renderHTML', err, {showStack: true}))
+            return cb(new gutil.PluginError('renderHTML', err, {showStack: true}))
           }
           nunjucksRender(file, contents, context, cb)
         })
@@ -403,6 +405,25 @@ function replaceAssetsPath(assetType) {
 
 
 
+// SEO and RSS
+// -----------
+
+gulp.task('rss', function () {
+  return gulp.src(srcPath + '/atom.xml')
+    .pipe(through.obj(function (file, enc, cb) {
+      var context = {site: site}
+      var contents = file.contents.toString('utf8')
+      nunjucksRender(file, contents, context, cb)
+      // var tpl = swig.compileFile(file.path)
+      // file.contents = new Buffer(tpl(data), 'utf8')
+      // this.push(file)
+      // cb()
+    }))
+    .pipe(gulp.dest(buildPath))
+})
+
+
+
 // dev & build
 // -----------
 
@@ -484,6 +505,7 @@ gulp.task('build:deploy', function (cb) {
   validateAWSConfig()
   runSequence(
     'build:optimize',
+    'rss',
     'build:version',
     'build:gzip',
     'build:s3:publish:html',
