@@ -8,7 +8,7 @@ Welcome to Poltergeist, yet another static site generator based on Gulp. Here is
 - Supports FrontMatter to add meta-data
 - Supports advanced layouts and templates
 - Supports SASS
-- Concatenates, minifies, versions and gzip assets (images, fonts, css and js)
+- Concatenates, minifies, versions and gzip assets (images, fonts, css, js and html)
 - Generates a RSS feed
 - One command to develop for with `gulp`
 - One command deploy to S3 with `gulp deploy`
@@ -25,6 +25,9 @@ Welcome to Poltergeist, yet another static site generator based on Gulp. Here is
 - [Posts and Pages](#posts-and-pages)
   - [Posts](#posts)
   - [Pages](#pages)
+- [Assets](#assets)
+  - [Javascript](#javascript)
+  - [CSS](#css)
 - [Deploy to S3 and Cloudfront](#deploy-to-s3-and-cloudfront)
 
 ### Getting started
@@ -130,6 +133,20 @@ The Front Matter for posts can take whatever you feel like. There is an `excerpt
 
 There is no constraint of format here. You can use the same strategy as posts by using folders and `index.html` files or you create `whatever.html` files.
 
+### Assets
+
+#### Javascript
+
+Poltergeist comes with a single `scripts.js` file. It might be enough for a small site but it also has its limits. Good news, we already have nunjucks for templating so you can use it here too. Any file in the `src/assets/js/` folder can be included. It is up to you to take care of the order and make sure things are properly included. Simply add this for instance `{% include "./vendor.js" %}` and the `src/assets/js/vendor.js` file will be included.
+
+All javascript file are uglified before being deployed.
+
+### CSS
+
+Poltergeist comes with SASS support. If you want to organize your CSS in multiple files, refer to the SASS documentation. It basically consist of adding something like `@import 'prism';` and the `src/assets/css/_vendor.scss` file will be included (note the underscore).
+
+All css files are minified before being deployed.
+
 ### Deploy to S3 and Cloudfront
 
 Poltergeist will upload your site to the specified bucket on S3 and if you have a CloudFront distribution, it will make sure to invalidate what needs to be. But first you want to configure your credentials in the `.env`:
@@ -147,7 +164,7 @@ You also want to make sure that the AWS keys have access to the S3 bucket and Cl
 
 ## Credits
 
-This project is inspired by the work of ![Sean Farrell](http://www.rioki.org/2014/06/09/jekyll-to-gulp.html) and ![Zell Liew](http://zellwk.com/blog/nunjucks-with-gulp/) and a bunch of other folks.
+This project is inspired by the work of [Sean Farrell](http://www.rioki.org/2014/06/09/jekyll-to-gulp.html) and [Zell Liew](http://zellwk.com/blog/nunjucks-with-gulp/) and a bunch of other folks.
 
 ---
 

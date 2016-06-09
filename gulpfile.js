@@ -13,7 +13,6 @@ var awspublish       = require('gulp-awspublish')
 var clean            = require('gulp-clean')
 var cloudfront       = require('gulp-cloudfront-invalidate-aws-publish')
 var collect          = require('gulp-rev-collector')
-var concat           = require('gulp-concat')
 var frontMatter      = require('gulp-front-matter')
 var htmlmin          = require('gulp-htmlmin')
 var imagemin         = require('gulp-imagemin')
@@ -53,10 +52,16 @@ marked.setOptions({
   smartypants: false
 })
 
-var nunjucksLoader = new nunjucks.FileSystemLoader([srcPath + '/templates'], {
-  watch: false,
-  noCache: false
-})
+var nunjucksLoader = new nunjucks.FileSystemLoader(
+  [
+    srcPath + '/templates',
+    assetsPath + '/js'
+  ],
+  {
+    watch: false,
+    noCache: false
+  }
+)
 
 var nunjucksEnv = new nunjucks.Environment(nunjucksLoader, {
   autoescape: false
@@ -127,7 +132,7 @@ function nunjucksRender(file, contents, context, cb) {
       return cb(new gutil.PluginError('nunjucksRender', err, {showStack: true}))
     }
     file.contents = new Buffer(res)
-    file.path = file.path.replace(/\.md$/, '.html')
+    file.path = file.path.replace(/\.(md|njk)$/, '.html')
     cb(null, file)
   })
 }
@@ -158,7 +163,7 @@ function renderHTML() {
 
 gulp.task('templates:pages', function () {
   return gulp.src([
-    srcPath + '/pages/**/*.html',
+    srcPath + '/pages/**/*.njk',
     srcPath + '/pages/**/*.md'
   ])
     .pipe(frontMatter({remove: true}))
@@ -168,7 +173,7 @@ gulp.task('templates:pages', function () {
 
 gulp.task('templates:posts', function () {
   return gulp.src([
-    srcPath + '/posts/**/*.html',
+    srcPath + '/posts/**/*.njk',
     srcPath + '/posts/**/*.md',
   ])
     .pipe(frontMatter({remove: true}))
@@ -210,10 +215,6 @@ gulp.task('templates:replace', function () {
   return replaceAssetsPath('*.html')
 })
 
-// gulp.task('templates:watch', function () {
-//   gulp.watch(srcPath + '/templates/*.html', ['nunjucks:compile'])
-// })
-
 
 
 // Styles
@@ -247,9 +248,18 @@ gulp.task('styles:replace', function () {
 // Scripts
 // -------
 
+function concatScripts() {
+  return through.obj(
+    function (file, enc, cb) {
+      var contents = file.contents.toString('utf8')
+      nunjucksRender(file, contents, {}, cb)
+    }
+  )
+}
+
 gulp.task('scripts:compile', function () {
   return gulp.src(assetsPath + '/js/scripts.js')
-    .pipe(concat('scripts.js'))
+    .pipe(concatScripts())
     .pipe(gulp.dest(buildPath + '/js'))
 })
 
@@ -446,14 +456,12 @@ gulp.task('default', function (cb) {
 })
 
 gulp.task('watch', function () {
-  gulp.watch(assetsPath + '/css/**/*.scss', ['styles:compile'])
-  gulp.watch(assetsPath + '/js/**/*.js',    ['scripts:compile'])
-  gulp.watch(assetsPath + '/fonts/**/*',    ['fonts:compile'])
-  gulp.watch(assetsPath + '/images/**/*',   ['images:compile'])
-  gulp.watch(
-    [srcPath + 'posts/**/*.md', srcPath + 'pages/**/*.html'],
-    ['templates:compile']
-  )
+  gulp.watch(assetsPath + '/css/**/*.scss',     ['styles:compile'])
+  gulp.watch(assetsPath + '/js/**/*.js',        ['scripts:compile'])
+  gulp.watch(assetsPath + '/fonts/**/*',        ['fonts:compile'])
+  gulp.watch(assetsPath + '/images/**/*',       ['images:compile'])
+  gulp.watch(srcPath + '/posts/**/*.{md,njk}', ['templates:posts'])
+  gulp.watch(srcPath + '/pages/**/*.{md,njk}', ['templates:pages'])
 })
 
 gulp.task('build:optimize', function (cb) {
