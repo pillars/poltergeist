@@ -83,6 +83,7 @@ function filename2date() {
         var day   = matches[3]
         var slug  = matches[4]
         file.frontMatter.date = new Date(year, month, day)
+        file.frontMatter.imageFolder = '/images/posts/' + name
         file.frontMatter.url  = '/' + year + '/' + month + '/' + slug
       }
       this.push(file)
@@ -282,7 +283,15 @@ gulp.task('scripts:replace', function () {
 // Images
 // -------
 
-gulp.task('images:compile', function () {
+gulp.task('images:compile:posts', function () {
+  return gulp.src(srcPath + '/posts/*/images/*')
+    .pipe(rename(function (path) {
+      path.dirname = 'posts/' + path.dirname.replace('/images', '')
+    }))
+    .pipe(gulp.dest(buildPath + '/images'))
+})
+
+gulp.task('images:compile', ['images:compile:posts'], function () {
   return gulp.src(assetsPath + '/images/**/*')
     .pipe(gulp.dest(buildPath + '/images'))
 })
@@ -456,10 +465,10 @@ gulp.task('default', function (cb) {
 })
 
 gulp.task('watch', function () {
-  gulp.watch(assetsPath + '/css/**/*.scss',     ['styles:compile'])
-  gulp.watch(assetsPath + '/js/**/*.js',        ['scripts:compile'])
-  gulp.watch(assetsPath + '/fonts/**/*',        ['fonts:compile'])
-  gulp.watch(assetsPath + '/images/**/*',       ['images:compile'])
+  gulp.watch(assetsPath + '/css/**/*.scss',    ['styles:compile'])
+  gulp.watch(assetsPath + '/js/**/*.js',       ['scripts:compile'])
+  gulp.watch(assetsPath + '/fonts/**/*',       ['fonts:compile'])
+  gulp.watch('**/images/**/*',                 ['images:compile'])
   gulp.watch(srcPath + '/posts/**/*.{md,njk}', ['templates:posts'])
   gulp.watch(srcPath + '/pages/**/*.{md,njk}', ['templates:pages'])
 })

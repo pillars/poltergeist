@@ -121,13 +121,25 @@ We still have the title. Note that we do not declare a layout, but it will use `
 
 ### Posts and Pages
 
-Templates come in two flavours: Posts and Pages. Each have its own directory.
+Templates come in two flavors: Posts and Pages. Each have its own directory.
 
 #### Posts
 
 Every post must be a folder formatted like `src/posts/2016-06-24-slug` with an `index.html` in it. It allows to have a pretty url like `/2016/06/slug` as well as ordering the posts. Poltergeist leaves the day out of the url because there is no benefit. Some people dislike having the date in the url, I think it is of great value. I want to know at first sight if I'm reading a recent or old article.
 
 The Front Matter for posts can take whatever you feel like. There is an `excerpt` key in the example file. Note that the `date` and `url` fields are auto generated from the folder name.
+
+You can keep the images related to a post inside the post folder. Simply create an `images/` folder. Inside your post, the `imageFolder` variable allows you to forget about where the files are. To add an image do something like:
+
+```html
+<img src="{{imageFolder}}/image.png" alt="" />
+```
+
+or:
+
+```markdown
+[]({{imageFolder}})
+```
 
 #### Pages
 
@@ -157,6 +169,8 @@ Poltergeist will upload your site to the specified bucket on S3 and if you have 
 - AWS_ACCESS_KEY_ID: The AWS access key
 - AWS_SECRET_ACCESS_KEY: The AWS secret access key
 - CLOUDFRONT_DISTRIBUTION: The CloudFront distribution id
+
+If you need help setting up S3, Route53 or CloudFront, read [this tutorial](https://karelledru.com/2016/06/static-site-hosting-on-S3-and-CloudFront).
 
 You also want to make sure that the AWS keys have access to the S3 bucket and Cloudfront. Once that's the case, you can deploy by running `gulp build:deploy`.
 
