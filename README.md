@@ -145,6 +145,10 @@ or:
 
 There is no constraint of format here. You can use the same strategy as posts by using folders and `index.html` files or you create `whatever.html` files.
 
+#### Other
+
+- [Define Open Graph meta tags for Social Sharing](/docs/open-graph.md)
+
 ### Assets
 
 #### Javascript
