@@ -82,9 +82,14 @@ function filename2date() {
         var month = matches[2]
         var day   = matches[3]
         var slug  = matches[4]
-        file.frontMatter.date = new Date(year, month, day)
+        file.frontMatter.date = new Date(year, month - 1, day)
         file.frontMatter.imageFolder = '/images/posts/' + name
+        file.frontMatter.ogImage =
+          validateENV('PRODUCTION_ASSET_URL') +
+          file.frontMatter.imageFolder + '/' +
+          file.frontMatter.ogImage
         file.frontMatter.url  = '/' + year + '/' + month + '/' + slug
+        file.frontMatter.fullUrl  = site.url + '/' + year + '/' + month + '/' + slug
       }
       this.push(file)
       cb()
@@ -284,7 +289,7 @@ gulp.task('scripts:replace', function () {
 // -------
 
 gulp.task('images:compile:posts', function () {
-  return gulp.src(srcPath + '/posts/*/images/*')
+  return gulp.src(srcPath + '/posts/*/images/**/*')
     .pipe(rename(function (path) {
       path.dirname = 'posts/' + path.dirname.replace('/images', '')
     }))
@@ -397,7 +402,8 @@ function version(assetFolder) {
   return gulp.src(buildPath + '/' + assetFolder + '**/*')
     .pipe(rev())
     .pipe(gulp.dest(buildPath + '/' + assetFolder))
-    .pipe(rev.manifest({
+    .pipe(rev.manifest(srcPath + '/rev-manifest.json', {
+      base: process.cwd() + '/' + srcPath,
       merge: true
     }))
     .pipe(gulp.dest(srcPath))
@@ -414,9 +420,10 @@ function replaceAssetsPath(assetType) {
     .pipe(collect({
       replaceReved: true,
       dirReplacements: {
-        '/': url + '/',
-        '/css': url + '/css',
-        '/js': url + '/js'
+        '/'       : url + '/',
+        '/css'    : url + '/css',
+        '/js'     : url + '/js',
+        '/images' : url + '/images'
       }
     }))
     .pipe(gulp.dest(buildPath))
@@ -500,19 +507,16 @@ gulp.task('build:version', function (cb) {
   // 3. because of step 2, css and js changes, now we version them
   // 4. we replace the new path for css and images in html
   // 5. we version html via Cloudfront cache invalidation
+  // NOTE version must happen in sequence to properly right the manifest!!
   return runSequence(
-    [
-      'images:version',
-      'fonts:version'
-    ],
+    'images:version',
+    'fonts:version',
     [
       'styles:replace',
       'scripts:replace'
     ],
-    [
-      'styles:version',
-      'scripts:version'
-    ],
+    'styles:version',
+    'scripts:version',
     'templates:replace',
     cb
   )
