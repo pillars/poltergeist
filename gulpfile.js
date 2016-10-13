@@ -59,7 +59,7 @@ var nunjucksLoader = new nunjucks.FileSystemLoader(
   ],
   {
     watch: false,
-    noCache: false
+    noCache: true
   }
 )
 
@@ -377,7 +377,8 @@ gulp.task('build:s3:publish:html', function () {
     .pipe(publisher.cache())
     .pipe(awspublish.reporter())
     .pipe(cloudfront({
-      distribution: process.env.CLOUDFRONT_DISTRIBUTION
+      distribution: process.env.CLOUDFRONT_DISTRIBUTION,
+      indexRootPath: true
     }))
 })
 
